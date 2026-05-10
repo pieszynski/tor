@@ -1,21 +1,18 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ProductsGraph } from './products-graph/products-graph';
 import { ProductsService } from './products.service';
 
 @Component({
   selector: 'tor-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, ProductsGraph],
   template: `
     <h1>Hello, {{ title() }}</h1>
 
     @if (productsService.error()) {
       <p style="color: red">{{ productsService.error() }}</p>
     } @else {
-      <ul>
-        @for (p of productsService.products(); track p.key) {
-          <li>{{ p.key }}</li>
-        }
-      </ul>
+      <tor-products-graph />
     }
 
     <router-outlet />
