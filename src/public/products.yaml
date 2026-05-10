@@ -41,3 +41,37 @@
       in: 2
     - key: Plastic_bar
       in: 2
+- key: Coal
+  resource: true
+- key: Petroleum_gas
+  out: 45
+  recipe:
+    - key: Crude_oil
+      in: 100
+- key: Crude_oil
+  resource: true
+- key: Water
+  resource: true
+- key: Processing_unit
+  out: 1
+  recipe:
+    - key: Advanced_circuit
+      in: 2
+    - key:  Electronic_circuit
+      in: 20
+    - key: Sulfuric_acid
+      in: 5
+- key: Sulfuric_acid
+  out: 50
+  recipe:
+    - key: Iron_plate
+      in: 1
+    - key: Sulfur
+      in: 5
+- key: Sulfur
+  out: 2
+  recipe:
+    - key: Petroleum_gas
+      in: 30
+    - key: Water
+      in: 30
