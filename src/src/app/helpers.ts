@@ -24,6 +24,12 @@ export interface ProductTreeNode {
   children: ProductTreeNode[];
 }
 
+export interface ProductTreeResult {
+  tree: ProductTreeNode;
+  /** Keys of leaf nodes that are not resources — these have no path to a resource in the graph */
+  warnings: string[];
+}
+
 export function buildGraph(products: Product[]): Graph {
   const nodes = products.map((p) => p.key);
   const roots = products.filter((p) => p.resource === true).map((p) => p.key);
@@ -55,6 +61,9 @@ export function buildGraph(products: Product[]): Graph {
  * Branches never share nodes — each occurrence is an independent subtree.
  * Leaves are resource nodes (graph.roots).
  *
+ * Returns the tree and a list of warnings for leaf nodes that are not resources
+ * (i.e. products with no path to a resource defined in the graph).
+ *
  * Example for Electronic_circuit:
  *   Electronic_circuit (1)
  *   ├── Copper_cable (3)       ← 3 cables needed
@@ -63,8 +72,28 @@ export function buildGraph(products: Product[]): Graph {
  *   └── Iron_plate (1)
  *       └── Iron_ore (1) [resource]
  */
-export function produceProduct(graph: Graph, productKey: string): ProductTreeNode {
-  return buildNode(graph, productKey, 1, new Set<string>());
+export function produceProduct(graph: Graph, productKey: string): ProductTreeResult {
+  const tree = buildNode(graph, productKey, 1, new Set<string>());
+  const warnings: string[] = [];
+  collectNonResourceLeaves(tree, new Set<string>(), warnings);
+  return { tree, warnings };
+}
+
+function collectNonResourceLeaves(
+  node: ProductTreeNode,
+  seen: Set<string>,
+  warnings: string[],
+): void {
+  if (node.children.length === 0 && !node.isResource) {
+    if (!seen.has(node.key)) {
+      seen.add(node.key);
+      warnings.push(node.key);
+    }
+    return;
+  }
+  for (const child of node.children) {
+    collectNonResourceLeaves(child, seen, warnings);
+  }
 }
 
 function buildNode(

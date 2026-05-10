@@ -13,15 +13,22 @@ function formatAmount(node: ProductTreeNode): string {
   return extra > 0 ? `×${needed} + ×${extra} (extra)` : `×${needed}`;
 }
 
-function renderAsciiTree(node: ProductTreeNode, prefix = '', childrenPrefix = ''): string {
-  const label = `${node.key} ${formatAmount(node)}${node.isResource ? ' [resource]' : ''}`;
+function renderAsciiTree(
+  node: ProductTreeNode,
+  warningKeys: Set<string>,
+  prefix = '',
+  childrenPrefix = '',
+): string {
+  const isWarning = node.children.length === 0 && !node.isResource && warningKeys.has(node.key);
+  const marker = isWarning ? '⚠ ' : '';
+  const label = `${marker}${node.key} ${formatAmount(node)}${node.isResource ? ' [resource]' : ''}`;
   const line = prefix + label;
 
   const childLines = node.children.flatMap((child, i) => {
     const isLast = i === node.children.length - 1;
     const connector = isLast ? '└── ' : '├── ';
     const extension = isLast ? '    ' : '│   ';
-    return renderAsciiTree(child, childrenPrefix + connector, childrenPrefix + extension).split('\n');
+    return renderAsciiTree(child, warningKeys, childrenPrefix + connector, childrenPrefix + extension).split('\n');
   });
 
   return [line, ...childLines].join('\n');
@@ -63,6 +70,11 @@ function buildSummary(key: string, tree: ProductTreeNode): string {
 
     @if (asciiTree()) {
       <pre style="font-family: monospace; line-height: 1.6; background: var(--p-surface-card); padding: 1rem; border-radius: var(--p-border-radius); border: 1px solid var(--p-surface-border)">{{ asciiTree() }}</pre>
+      @if (warnings().length > 0) {
+        <div class="mt-3 p-3 rounded-lg" style="background: var(--p-yellow-50); color: var(--p-yellow-800); border: 1px solid var(--p-yellow-300)">
+          <strong>Warning:</strong> No path to a resource for: {{ warnings().join(', ') }}
+        </div>
+      }
       <p class="mt-3 text-sm" style="color: var(--p-text-muted-color)">{{ summary() }}</p>
     }
   `,
@@ -78,7 +90,7 @@ export class ProductTree {
       .map((p) => p.key),
   );
 
-  private readonly tree = computed(() => {
+  private readonly treeResult = computed(() => {
     const key = this.selectedKey();
     if (!key) return null;
     const graph = buildGraph(this.productsService.products());
@@ -86,13 +98,15 @@ export class ProductTree {
   });
 
   protected readonly asciiTree = computed(() => {
-    const tree = this.tree();
-    return tree ? renderAsciiTree(tree) : null;
+    const result = this.treeResult();
+    return result ? renderAsciiTree(result.tree, new Set(result.warnings)) : null;
   });
 
   protected readonly summary = computed(() => {
     const key = this.selectedKey();
-    const tree = this.tree();
-    return tree ? buildSummary(key, tree) : null;
+    const result = this.treeResult();
+    return result ? buildSummary(key, result.tree) : null;
   });
+
+  protected readonly warnings = computed(() => this.treeResult()?.warnings ?? []);
 }

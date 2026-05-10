@@ -4,24 +4,40 @@
 - key: Iron_plate
   out: 1
   recipe:
-  - key: Iron_ore
-    in: 1
+    - key: Iron_ore
+      in: 1
 - key: Electronic_circuit
   out: 1
   recipe:
-  - key: Copper_cable
-    in: 3
-  - key: Iron_plate
-    in: 1
+    - key: Copper_cable
+      in: 3
+    - key: Iron_plate
+      in: 1
 - key: Copper_cable
   out: 2
   recipe:
-  - key: Copper_plate
-    in: 1
+    - key: Copper_plate
+      in: 1
 - key: Copper_ore
   resource: true
 - key: Copper_plate
   out: 1
   recipe:
-  - key: Copper_ore
-    in: 1
+    - key: Copper_ore
+      in: 1
+- key: Plastic_bar
+  out: 2
+  recipe:
+    - key: Coal
+      in: 1
+    - key: Petroleum_gas
+      in: 20
+- key: Advanced_circuit
+  out: 1
+  recipe:
+    - key: Copper_cable
+      in: 4
+    - key: Electronic_circuit
+      in: 2
+    - key: Plastic_bar
+      in: 2
