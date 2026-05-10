@@ -6,10 +6,11 @@ import { Product } from './products.model';
 function node(
   key: string,
   weight: number,
+  out: number,
   isResource: boolean,
   children: ProductTreeNode[] = [],
 ): ProductTreeNode {
-  return { key, weight, isResource, children };
+  return { key, weight, out, isResource, children };
 }
 
 function graphOf(products: Product[]): Graph {
@@ -97,7 +98,7 @@ describe('produceProduct', () => {
     it('root has weight 1 and is not a resource', () => {
       const tree = produceProduct(graph, 'Iron_plate');
       expect(tree).toEqual(
-        node('Iron_plate', 1, false, [node('Iron_ore', 2, true)]),
+        node('Iron_plate', 1, 1, false, [node('Iron_ore', 2, 1, true)]),
       );
     });
 
@@ -113,7 +114,7 @@ describe('produceProduct', () => {
 
     it('calling produceProduct on a resource node returns a leaf', () => {
       const tree = produceProduct(graph, 'Iron_ore');
-      expect(tree).toEqual(node('Iron_ore', 1, true));
+      expect(tree).toEqual(node('Iron_ore', 1, 1, true));
     });
   });
 
@@ -139,6 +140,7 @@ describe('produceProduct', () => {
       const tree = produceProduct(graph, 'Electronic_circuit');
       const cable = tree.children.find((c) => c.key === 'Copper_cable')!;
       expect(cable.weight).toBe(3);
+      expect(cable.out).toBe(2);
     });
 
     it('Copper_plate under Copper_cable has weight 1.5 (3 × 1/2)', () => {

@@ -10,12 +10,16 @@ export interface Graph {
   nodes: string[];
   edges: GraphEdge[];
   roots: string[];
+  /** Maps product key → number of items produced per craft (1 for resources) */
+  outMap: Record<string, number>;
 }
 
 export interface ProductTreeNode {
   key: string;
   /** Amount of this product needed relative to producing 1 unit of the tree root */
   weight: number;
+  /** Number of items produced per craft (from the product definition) */
+  out: number;
   isResource: boolean;
   children: ProductTreeNode[];
 }
@@ -24,8 +28,11 @@ export function buildGraph(products: Product[]): Graph {
   const nodes = products.map((p) => p.key);
   const roots = products.filter((p) => p.resource === true).map((p) => p.key);
   const edges: GraphEdge[] = [];
+  const outMap: Record<string, number> = {};
 
   for (const product of products) {
+    outMap[product.key] = product.resource ? 1 : (product.out ?? 1);
+
     if (!product.recipe) continue;
 
     const out = product.out ?? 1;
@@ -39,7 +46,7 @@ export function buildGraph(products: Product[]): Graph {
     }
   }
 
-  return { nodes, edges, roots };
+  return { nodes, edges, roots, outMap };
 }
 
 /**
@@ -76,5 +83,5 @@ function buildNode(
     }
   }
 
-  return { key: productKey, weight, isResource, children };
+  return { key: productKey, weight, out: graph.outMap[productKey] ?? 1, isResource, children };
 }

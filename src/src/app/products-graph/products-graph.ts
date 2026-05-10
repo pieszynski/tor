@@ -20,7 +20,7 @@ import { ProductsService } from '../products.service';@Component({
         <h3>Edges</h3>
         <ul>
           @for (edge of graph().edges; track edge.from + edge.to) {
-            <li>{{ edge.from }} → {{ edge.to }} (weight: {{ edge.weight }})</li>
+            <li>{{ edge.to }} ← {{ edge.from }} (weight: {{ edge.weight }})</li>
           }
         </ul>
       </section>

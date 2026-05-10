@@ -1,11 +1,12 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ProductTree } from './product-tree/product-tree';
 import { ProductsGraph } from './products-graph/products-graph';
 import { ProductsService } from './products.service';
 
 @Component({
   selector: 'tor-root',
-  imports: [RouterOutlet, ProductsGraph],
+  imports: [RouterOutlet, ProductsGraph, ProductTree],
   template: `
     <h1>Hello, {{ title() }}</h1>
 
@@ -13,6 +14,7 @@ import { ProductsService } from './products.service';
       <p style="color: red">{{ productsService.error() }}</p>
     } @else {
       <tor-products-graph />
+      <tor-product-tree />
     }
 
     <router-outlet />
