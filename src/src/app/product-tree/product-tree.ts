@@ -51,21 +51,20 @@ function buildSummary(key: string, tree: ProductTreeNode): string {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, Select],
   template: `
-    <div>
-      <h2>Product Tree</h2>
+    <h2 class="text-2xl font-semibold mb-4">Product Tree</h2>
 
-      <p-select
-        [options]="manufacturableProducts()"
-        [ngModel]="selectedKey()"
-        (ngModelChange)="selectedKey.set($event)"
-        placeholder="Select a product"
-      />
+    <p-select
+      [options]="manufacturableProducts()"
+      [ngModel]="selectedKey()"
+      (ngModelChange)="selectedKey.set($event)"
+      placeholder="Select a product"
+      class="mb-4 block"
+    />
 
-      @if (asciiTree()) {
-        <pre style="font-family: monospace; line-height: 1.4">{{ asciiTree() }}</pre>
-        <p>{{ summary() }}</p>
-      }
-    </div>
+    @if (asciiTree()) {
+      <pre style="font-family: monospace; line-height: 1.6; background: var(--p-surface-card); padding: 1rem; border-radius: var(--p-border-radius); border: 1px solid var(--p-surface-border)">{{ asciiTree() }}</pre>
+      <p class="mt-3 text-sm" style="color: var(--p-text-muted-color)">{{ summary() }}</p>
+    }
   `,
 })
 export class ProductTree {

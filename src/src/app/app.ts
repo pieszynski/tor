@@ -1,28 +1,49 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { ProductTree } from './product-tree/product-tree';
-import { ProductsGraph } from './products-graph/products-graph';
+import { Component, inject, OnInit } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Button } from 'primeng/button';
+import { Toolbar } from 'primeng/toolbar';
 import { ProductsService } from './products.service';
 
 @Component({
   selector: 'tor-root',
-  imports: [RouterOutlet, ProductsGraph, ProductTree],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, Toolbar, Button],
   template: `
-    <h1>Hello, {{ title() }}</h1>
+    <p-toolbar>
+      <ng-template #start>
+        <p-button
+          label="Tor"
+          icon="pi pi-home"
+          [text]="true"
+          routerLink="/"
+        />
+        <p-button
+          label="Product Tree"
+          routerLink="/products-tree"
+          routerLinkActive="p-button-outlined"
+          styleClass="ml-2"
+        />
+        <p-button
+          label="Products Graph"
+          routerLink="/products-graph"
+          routerLinkActive="p-button-outlined"
+          styleClass="ml-2"
+        />
+      </ng-template>
+    </p-toolbar>
 
     @if (productsService.error()) {
-      <p style="color: red">{{ productsService.error() }}</p>
+      <div class="page-content">
+        <p style="color: var(--p-red-500)">{{ productsService.error() }}</p>
+      </div>
     } @else {
-      <tor-products-graph />
-      <tor-product-tree />
+      <div class="page-content">
+        <router-outlet />
+      </div>
     }
-
-    <router-outlet />
   `,
   styles: [],
 })
 export class App implements OnInit {
-  protected readonly title = signal('tor');
   protected readonly productsService = inject(ProductsService);
 
   ngOnInit() {
