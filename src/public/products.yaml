@@ -20,3 +20,8 @@
     in: 1
 - key: Copper_ore
   resource: true
+- key: Copper_plate
+  out: 1
+  recipe:
+  - key: Copper_ore
+    in: 1

@@ -1,42 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { Product } from '../products.model';
-import { ProductsService } from '../products.service';
-
-export interface GraphEdge {
-  from: string;
-  to: string;
-  weight: number;
-}
-
-export interface Graph {
-  nodes: string[];
-  edges: GraphEdge[];
-  roots: string[];
-}
-
-export function buildGraph(products: Product[]): Graph {
-  const nodes = products.map((p) => p.key);
-  const roots = products.filter((p) => p.resource === true).map((p) => p.key);
-  const edges: GraphEdge[] = [];
-
-  for (const product of products) {
-    if (!product.recipe) continue;
-
-    const out = product.out ?? 1;
-
-    for (const ingredient of product.recipe) {
-      edges.push({
-        from: ingredient.key,
-        to: product.key,
-        weight: ingredient.in / out,
-      });
-    }
-  }
-
-  return { nodes, edges, roots };
-}
-
-@Component({
+import { buildGraph } from '../helpers';
+import { ProductsService } from '../products.service';@Component({
   selector: 'tor-products-graph',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
