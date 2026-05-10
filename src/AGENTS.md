@@ -1,6 +1,37 @@
 
 You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
 
+## Project Overview
+
+Angular 21 application using PrimeNG 21 (Aura theme) + Tailwind CSS v4 for UI. See [README.md](README.md) for project background.
+
+## Commands
+
+```bash
+npm start          # dev server at http://localhost:4200
+npm run build      # production build → dist/
+ng test            # unit tests (Vitest)
+ng generate component <name>   # scaffold component
+```
+
+## Tech Stack
+
+- **Angular 21** — standalone components (no NgModules), signals, new control flow
+- **PrimeNG 21** — UI components, configured with Aura theme preset in `src/app/app.config.ts`
+- **Tailwind CSS v4** — utility classes via PostCSS (`@import 'tailwindcss'` in `styles.css`)
+- **PrimeIcons** — icon font (`pi pi-*` classes)
+
+## Code Generation Defaults
+
+The project schematics are pre-configured (in `angular.json`):
+- All new components use **inline templates and inline styles** (no separate `.html`/`.css` files)
+- **Tests are skipped** by default for all schematics
+- Component prefix: `tor` (e.g. `tor-root`, `tor-header`)
+
+## Formatting
+
+Prettier with `printWidth: 100`, `singleQuote: true`, Angular HTML parser for `.html` files.
+
 ## TypeScript Best Practices
 
 - Use strict type checking

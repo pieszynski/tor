@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "products.schema.json",
+  "title": "Products",
+  "description": "List of products and raw resources for the factory planner",
+  "type": "array",
+  "items": {
+    "oneOf": [
+      {
+        "title": "Resource",
+        "description": "A raw resource with no recipe",
+        "type": "object",
+        "required": ["key", "resource"],
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Unique identifier for the product"
+          },
+          "resource": {
+            "const": true,
+            "description": "Marks this as a raw resource"
+          }
+        }
+      },
+      {
+        "title": "Manufactured Product",
+        "description": "A product that is produced from a recipe",
+        "type": "object",
+        "required": ["key", "out", "recipe"],
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Unique identifier for the product"
+          },
+          "out": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Number of items produced per craft"
+          },
+          "recipe": {
+            "type": "array",
+            "minItems": 1,
+            "description": "List of ingredients required",
+            "items": {
+              "type": "object",
+              "required": ["key", "in"],
+              "additionalProperties": false,
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Key of the ingredient product"
+                },
+                "in": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Number of this ingredient consumed per craft"
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

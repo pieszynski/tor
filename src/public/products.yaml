@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=./products.schema.json
+- key: Iron_ore
+  resource: true
+- key: Iron_plate
+  out: 1
+  recipe:
+  - key: Iron_ore
+    in: 1
+- key: Electronic_circuit
+  out: 1
+  recipe:
+  - key: Copper_cable
+    in: 3
+  - key: Iron_plate
+    in: 1
+- key: Copper_cable
+  out: 2
+  recipe:
+  - key: Copper_plate
+    in: 1
+- key: Copper_ore
+  resource: true
