@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { buildGraph, produceProduct, ProductTreeNode } from '../helpers';
 import { ProductsService } from '../products.service';
@@ -75,7 +77,7 @@ function buildSummary(key: string, tree: ProductTreeNode): string {
     <p-select
       [options]="manufacturableProducts()"
       [ngModel]="selectedKey()"
-      (ngModelChange)="selectedKey.set($event)"
+      (ngModelChange)="onSelectionChange($event)"
       placeholder="Select a product"
       [filter]="true"
       filterPlaceholder="Search..."
@@ -104,10 +106,30 @@ function buildSummary(key: string, tree: ProductTreeNode): string {
     }
   `,
 })
-export class ProductTree {
+export class ProductTree implements OnInit {
   private readonly productsService = inject(ProductsService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly selectedKey = signal<string>('');
+
+  ngOnInit(): void {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+      const product: string = params['product'] ?? '';
+      if (product !== this.selectedKey()) {
+        this.selectedKey.set(product);
+      }
+    });
+  }
+
+  protected onSelectionChange(key: string): void {
+    this.selectedKey.set(key);
+    this.router.navigate([], {
+      queryParams: { product: key || null },
+      replaceUrl: true,
+    });
+  }
 
   protected readonly manufacturableProducts = computed(() =>
     this.productsService.products()

@@ -1,6 +1,7 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
-import { provideRouter } from '@angular/router';
+import { provideRouter, TitleStrategy } from '@angular/router';
+import { AppTitleStrategy } from './title-strategy';
 
 import { routes } from './app.routes';
 import { providePrimeNG } from 'primeng/config';
@@ -30,6 +31,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(),
     provideRouter(routes),
+    { provide: TitleStrategy, useClass: AppTitleStrategy },
     providePrimeNG({
       theme: {
         preset: BurntOrangePreset,

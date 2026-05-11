@@ -4,6 +4,6 @@ import { ProductTree } from './product-tree/product-tree';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', children: [] },
-  { path: 'products-graph', component: ProductsGraph },
-  { path: 'products-tree', component: ProductTree },
+  { path: 'products-graph', component: ProductsGraph, title: 'Products Graph' },
+  { path: 'products-tree', component: ProductTree, title: 'Product Tree' },
 ];
