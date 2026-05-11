@@ -79,7 +79,9 @@ function buildSummary(key: string, tree: ProductTreeNode): string {
       placeholder="Select a product"
       [filter]="true"
       filterPlaceholder="Search..."
-      class="mb-4 block"
+      styleClass="w-full mb-4"
+      [panelStyle]="{ 'max-height': '60vh' }"
+      scrollHeight="60vh"
     />
 
     @if (treeLines().length > 0) {
