@@ -10,7 +10,7 @@
 #   Then open http://localhost:8080
 
 # Stage 1: build
-FROM --platform=linux/arm64 node:22-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
@@ -22,7 +22,7 @@ RUN npm test
 RUN npm run build
 
 # Stage 2: serve
-FROM --platform=linux/arm64 nginx:alpine
+FROM nginx:alpine
 
 COPY --from=builder /app/dist/tor/browser /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
