@@ -4,6 +4,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Button } from 'primeng/button';
 import { SelectButton } from 'primeng/selectbutton';
 import { Toolbar } from 'primeng/toolbar';
+import { BuildInfoService } from './build-info.service';
 import { ProductsService } from './products.service';
 
 type ThemeMode = 'system' | 'light' | 'dark';
@@ -56,11 +57,53 @@ type ThemeMode = 'system' | 'light' | 'dark';
         <router-outlet />
       </div>
     }
+
+    @if (buildInfo.info; as info) {
+      <footer class="build-footer">
+        <span>{{ info.author }}</span>
+        <span class="sep">|</span>
+        <span>{{ info.version }}</span>
+        <span class="sep">|</span>
+        <a [href]="info.repo" target="_blank" rel="noreferrer noopener">{{ info.repoLabel }}</a>
+      </footer>
+    }
   `,
-  styles: [],
+  styles: [`
+    :host {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    :host > :not(footer) {
+      flex-shrink: 0;
+    }
+    :host > footer {
+      margin-top: auto;
+    }
+    .build-footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem;
+      font-size: 0.75rem;
+      color: var(--p-text-muted-color);
+      border-top: 1px solid var(--p-surface-border);
+      margin-top: 2rem;
+    }
+    .build-footer a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .build-footer a:hover {
+      color: var(--p-primary-color);
+    }
+    .sep { opacity: 0.4; }
+  `],
 })
 export class App implements OnInit {
   protected readonly productsService = inject(ProductsService);
+  protected readonly buildInfo = inject(BuildInfoService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 

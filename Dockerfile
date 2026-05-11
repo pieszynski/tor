@@ -22,6 +22,15 @@ COPY src/ .
 RUN npm test
 RUN npm run build
 
+ARG BUILD_VERSION=dev
+ARG BUILD_REPO=https://github.com/pieszynski/tor
+RUN AUTHOR=$(node -p "require('./package.json').author") && \
+    sed -i \
+      -e "s|%%AUTHOR%%|${AUTHOR}|g" \
+      -e "s|%%VERSION%%|${BUILD_VERSION}|g" \
+      -e "s|%%REPO%%|${BUILD_REPO}|g" \
+      dist/tor/browser/index.html
+
 # Stage 2: serve
 FROM nginx:alpine
 
