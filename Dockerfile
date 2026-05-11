@@ -8,6 +8,7 @@
 # Run locally:
 #   docker run --rm -p 8080:80 tor-app
 #   Then open http://localhost:8080
+#
 
 # Stage 1: build
 FROM node:22-alpine AS builder
