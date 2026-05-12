@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Button } from 'primeng/button';
@@ -35,16 +35,24 @@ type ThemeMode = 'system' | 'light' | 'dark';
         />
       </ng-template>
       <ng-template #end>
-        <p-selectbutton
-          [options]="themeModeOptions"
-          [ngModel]="themeMode()"
-          (ngModelChange)="setTheme($event)"
-          optionValue="value"
-        >
-          <ng-template #item let-item>
-            <i [class]="item.icon"></i>
-          </ng-template>
-        </p-selectbutton>
+        @if (isNarrow()) {
+          <p-button
+            [icon]="themeIcon()"
+            [text]="true"
+            (onClick)="cycleTheme()"
+          />
+        } @else {
+          <p-selectbutton
+            [options]="themeModeOptions"
+            [ngModel]="themeMode()"
+            (ngModelChange)="setTheme($event)"
+            optionValue="value"
+          >
+            <ng-template #item let-item>
+              <i [class]="item.icon"></i>
+            </ng-template>
+          </p-selectbutton>
+        }
       </ng-template>
     </p-toolbar>
 
@@ -109,6 +117,13 @@ export class App implements OnInit {
 
   protected readonly themeMode = signal<ThemeMode>('system');
 
+  protected readonly isNarrow = signal(window.innerWidth < 700);
+
+  protected readonly themeIcon = computed(() => {
+    const mode = this.themeMode();
+    return mode === 'light' ? 'pi pi-sun' : mode === 'dark' ? 'pi pi-moon' : 'pi pi-desktop';
+  });
+
   protected readonly themeModeOptions: { value: ThemeMode; icon: string }[] = [
     { value: 'system', icon: 'pi pi-desktop' },
     { value: 'light', icon: 'pi pi-sun' },
@@ -125,13 +140,25 @@ export class App implements OnInit {
     this.applyTheme(mode);
   }
 
+  protected cycleTheme(): void {
+    const order: ThemeMode[] = ['system', 'light', 'dark'];
+    const next = order[(order.indexOf(this.themeMode()) + 1) % order.length];
+    this.setTheme(next);
+  }
+
   ngOnInit() {
     this.applyTheme('system');
     const handler = () => {
       if (this.themeMode() === 'system') this.applyTheme('system');
     };
     this.mediaQuery.addEventListener('change', handler);
-    this.destroyRef.onDestroy(() => this.mediaQuery.removeEventListener('change', handler));
+
+    const resizeHandler = () => this.isNarrow.set(window.innerWidth < 700);
+    window.addEventListener('resize', resizeHandler);
+    this.destroyRef.onDestroy(() => {
+      this.mediaQuery.removeEventListener('change', handler);
+      window.removeEventListener('resize', resizeHandler);
+    });
 
     this.productsService.load().subscribe({
       next: (products) => this.productsService.products.set(products),

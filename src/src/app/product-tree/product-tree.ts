@@ -67,7 +67,7 @@ function buildSummary(key: string, tree: ProductTreeNode): string {
   imports: [FormsModule, Select],
   styles: [`
     .tree-block { font-family: monospace; line-height: 1.6; background: var(--p-surface-card); padding: 1rem; border-radius: var(--p-border-radius); border: 1px solid var(--p-surface-border); }
-    .tree-line { white-space: pre; }
+    .tree-line { white-space: pre-wrap; word-break: break-word; }
     .wiki-link { color: var(--p-primary-color); text-decoration: none; }
     .wiki-link:hover { text-decoration: underline; }
   `],
